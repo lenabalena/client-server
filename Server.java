@@ -11,12 +11,12 @@ import java.net.Socket;
     { try{
         server=new ServerSocket(port);
         Socket socket  = server.accept();
+        ObjectOutputStream output =new ObjectOutputStream(socket.getOutputStream());
+        output.writeObject("Hello ");
         ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
         String message;
         message=(String)input.readObject();
         System.out.println("Hello "+message);
-        ObjectOutputStream output =new ObjectOutputStream(socket.getOutputStream());
-        output.writeObject("Hello ");
         input.close();
         output.close();
         socket.close();
