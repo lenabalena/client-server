@@ -7,22 +7,22 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class Client {
-    public static void main(String[] a) throws  IOException,ClassNotFoundException
-    { InetAddress host=InetAddress.getLocalHost();
+    public static void main(String[] a) throws IOException, ClassNotFoundException {
+        InetAddress host = InetAddress.getLocalHost();
         Socket socket;
         ObjectOutputStream output;
         ObjectInputStream input;
-        socket=new Socket(host.getHostName(),8080);
+        socket = new Socket(host.getHostName(), 8080);
 
-        input=new ObjectInputStream(socket.getInputStream());
-        String message=(String)input.readObject();
-        System.out.println(message+"World");
+        input = new ObjectInputStream(socket.getInputStream());
+        String message = (String) input.readObject();
+        System.out.println(message + "World");
 
-        output=new ObjectOutputStream(socket.getOutputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());
         output.writeObject("World");
 
-        output.close();
         input.close();
+        output.close();
         socket.close();
     }
 
