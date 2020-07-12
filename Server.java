@@ -8,23 +8,15 @@ public class Server {
     private static ServerSocket server;
     private static final int port = 8080;
 
-    public static void main(String[] a) //throws IOException,ClassNotFoundException
-    {
+    public static void main(String[] a) {
         Socket socket;
         try {
             server = new ServerSocket(port);
             try {
                 while (true) {
                     socket = server.accept();
-                    ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                    output.writeObject("Hello ");
-                    ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                    String message;
-                    message = (String) input.readObject();
-                    System.out.println("Hello " + message);
-                    input.close();
-                    output.close();
-                    socket.close();
+                    Thread t = new ClientHandler(socket);
+                    t.start();
                 }
             } catch (Exception e) {
                 server.close();
@@ -35,8 +27,34 @@ public class Server {
             ee.printStackTrace();
         }
     }
+}
+
+class ClientHandler extends Thread {
+
+    final Socket s;
+
+    public ClientHandler(Socket s) {
+        this.s = s;
+    }
+
+    @Override
+    public void run() {
+            try {
+                ObjectOutputStream output = new ObjectOutputStream(s.getOutputStream());
+                output.writeObject("Hello ");
+                ObjectInputStream input = new ObjectInputStream(s.getInputStream());
+                String message;
+                message = (String) input.readObject();
+                System.out.println("Hello " + message);
+                input.close();
+                output.close();
+                s.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
+    }
 }
 
 

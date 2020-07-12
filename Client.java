@@ -21,9 +21,9 @@ public class Client {
         output = new ObjectOutputStream(socket.getOutputStream());
         output.writeObject("World");
 
-        input.close();
-        output.close();
-        socket.close();
+        //input.close();
+        //output.close();
+        //socket.close();
     }
 
 
