@@ -1,4 +1,3 @@
-package com.company;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -40,12 +39,12 @@ class ClientHandler extends Thread {
     @Override
     public void run() {
             try {
-                ObjectOutputStream output = new ObjectOutputStream(s.getOutputStream());
-                output.writeObject("Hello ");
                 ObjectInputStream input = new ObjectInputStream(s.getInputStream());
-                String message;
-                message = (String) input.readObject();
-                System.out.println("Hello " + message);
+                String name;
+                name = (String) input.readObject();
+                System.out.println( name + " joined chat! Hello:)");
+                ObjectOutputStream output = new ObjectOutputStream(s.getOutputStream());
+                output.writeObject(" joined chat! Hello:)");
                 input.close();
                 output.close();
                 s.close();
