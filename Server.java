@@ -38,19 +38,35 @@ class ClientHandler extends Thread {
 
     @Override
     public void run() {
-            try {
-                ObjectInputStream input = new ObjectInputStream(s.getInputStream());
-                String name;
-                name = (String) input.readObject();
-                System.out.println( name + " joined chat! Hello:)");
-                ObjectOutputStream output = new ObjectOutputStream(s.getOutputStream());
-                output.writeObject(" joined chat! Hello:)");
-                input.close();
-                output.close();
-                s.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            ObjectInputStream input = new ObjectInputStream(s.getInputStream());
+            String name;
+            name = (String) input.readObject();
+            System.out.println(name + " joined chat! Hello:)");
+            ObjectOutputStream output = new ObjectOutputStream(s.getOutputStream());
+            output.writeObject(" joined chat! Hello:)");
+            boolean done = false;
+            while (!done) {
+                try {
+                    String message = (String) input.readObject();
+                    if (!message.equals("exit")) {
+                        System.out.println(name + ":" + message);
+                    } else {
+                        System.out.println(name + " left chat.");
+                    }
+                    done = message.equals("exit");
+
+                } catch (Exception e) {
+                    done = true;
+                    e.printStackTrace();
+                }
             }
+            input.close();
+            output.close();
+            s.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }

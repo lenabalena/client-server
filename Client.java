@@ -12,19 +12,25 @@ public class Client {
         Socket socket;
         ObjectOutputStream output;
         ObjectInputStream input;
-        Scanner scan=new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
         socket = new Socket(host.getHostName(), 8080);
-
-
 
         output = new ObjectOutputStream(socket.getOutputStream());
         String name;
         System.out.println("Enter your name!");
-        name=scan.next();
+        name = scan.next();
         output.writeObject(name);
         input = new ObjectInputStream(socket.getInputStream());
-        String message = (String) input.readObject();
-        System.out.println(name + message);
+        String messageFromServer = (String) input.readObject();
+        System.out.println(name + messageFromServer);
+
+        System.out.println("Enter your messages.(write exit for break)");
+        String message;
+        do{
+            message = scan.nextLine();
+            output.writeObject(message);
+        } while(!message.equals("exit"));
+        System.out.println("You left chat!");
 
         input.close();
         output.close();
