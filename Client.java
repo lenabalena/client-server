@@ -20,9 +20,12 @@ public class Client implements Runnable{
     } catch(Exception e){e.printStackTrace();}
     }
     public void run()
-    { try {
-        while (true) {
-            String message = (String)input.readObject();
+    { String message;
+    try {
+        message=(String)input.readObject();
+        while (!message.equals("exit")) {
+            message = (String)input.readObject();
+            if(!message.equals("exit"))
             System.out.println(message);
         }
     } catch(Exception e){e.printStackTrace();}
@@ -49,8 +52,8 @@ public class Client implements Runnable{
 
     public void messageWriting(Scanner scanner) {
         try {
-            System.out.println("Enter your messages.(write exit for break)");
             new Thread(this).start();
+            System.out.println("Enter your messages.(write exit for break)");
             String message;
             do {
                 message = scanner.nextLine();
