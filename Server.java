@@ -43,27 +43,33 @@ public class Server {
         return outputStreams.elements();
     }
 
-    void sendToAll(String message,String name)
-    {
-        synchronized (outputStreams)
-        {
-            for(Enumeration e=getOutputStreams();e.hasMoreElements(); )
-            {
-                ObjectOutputStream out=(ObjectOutputStream)e.nextElement();
-                try{
-                    out.writeObject(name + ":" + message);
-                } catch(IOException ie){System.out.println(ie);}
+    void sendToAll(String message,String name,ObjectOutputStream output) {
+            synchronized (outputStreams) {
+                for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
+                    ObjectOutputStream out = (ObjectOutputStream) e.nextElement();
+                    if(message.equals("exit") && out!=output)
+                    { try {
+                        out.writeObject(name + " left chat.");
+                    }catch(Exception ee){ee.printStackTrace();}
+                    }
+                    else{
+                    try {
+                        if(out!=output && !message.equals("")){
+                        out.writeObject(name + ":" + message);}
+                    } catch (IOException ie) {
+                        System.out.println(ie);
+                    }}
+                }
             }
-        }
     }
 
-    void removeConnection(Socket socket)
+    void removeConnection(Socket socket,ObjectOutputStream output)
     {
         synchronized (outputStreams) {
             System.out.println("Removing connection to " + socket);
 
             outputStreams.remove(socket);
-            try{
+            try{ output.writeObject("exit");
                 socket.close();
             }catch(IOException ie){ie.printStackTrace();}
         }
@@ -102,7 +108,7 @@ class ClientHandler extends Thread {
                 name = (String) input.readObject();
             }
             System.out.println(name + " joined chat! Hello:)");
-            output.writeObject(name + "joined chat! Hello:)");
+            output.writeObject(name + " joined chat! Hello:)");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,9 +122,10 @@ class ClientHandler extends Thread {
                 String message = (String) input.readObject();
                 if (!message.equals("exit")) {
                     System.out.println(name + ":" + message);
-                    server.sendToAll(message,name);
+                    server.sendToAll(message,name,output);
                 }
                 else {
+                    server.sendToAll("exit",name,output);
                     System.out.println(name + " left chat.");
                 }
                 done = message.equals("exit");
@@ -136,16 +143,19 @@ class ClientHandler extends Thread {
 
     @Override
     public void run() {
+        String name;
         try {
-            String name = clientNameValidation();
+            name = clientNameValidation();
             clientMessagePrinting(name);
-            input.close();
-            output.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         finally {
-            server.removeConnection(socket);
+            server.removeConnection(socket,output);
+            try{
+            input.close();
+            output.close();}
+            catch(Exception e){e.printStackTrace();}
         }
 
 
