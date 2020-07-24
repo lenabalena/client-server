@@ -47,7 +47,13 @@ public class Server {
             synchronized (outputStreams) {
                 for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
                     ObjectOutputStream out = (ObjectOutputStream) e.nextElement();
-                    if(message.equals("exit") && out!=output)
+                    if(message.equals("join") && out!=output)
+                    {
+                        try{
+                            out.writeObject(name + " join chat.");
+                        } catch(Exception ei){ei.printStackTrace();}
+                    }
+                    else if(message.equals("exit") && out!=output)
                     { try {
                         out.writeObject(name + " left chat.");
                     }catch(Exception ee){ee.printStackTrace();}
@@ -109,6 +115,7 @@ class ClientHandler extends Thread {
             }
             System.out.println(name + " joined chat! Hello:)");
             output.writeObject(name + " joined chat! Hello:)");
+            server.sendToAll("join",name,output);
         } catch (Exception e) {
             e.printStackTrace();
         }

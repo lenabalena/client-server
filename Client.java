@@ -24,9 +24,8 @@ public class Client implements Runnable{
     try {
         message=(String)input.readObject();
         while (!message.equals("exit")) {
-            message = (String)input.readObject();
-            if(!message.equals("exit"))
             System.out.println(message);
+            message = (String)input.readObject();
         }
     } catch(Exception e){e.printStackTrace();}
     }
